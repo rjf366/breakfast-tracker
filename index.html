@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Breakfast Nutrition Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bowlby+One&display=swap" rel="stylesheet">
+  <style>
+    /* ── Happy Viking tokens ─────────────────────────────────── */
+    @font-face {
+      font-family: "Aeonik";
+      font-weight: 400 700;
+      font-display: swap;
+      src: url("fonts/Aeonik-Regular.woff2") format("woff2"),
+           url("fonts/Aeonik-Regular.woff") format("woff");
+    }
+
+    :root {
+      --hv-kale:        #01754F;
+      --hv-pineapple:   #E5F561;
+      --hv-green:       #42BD8A;
+      --hv-purple:      #9B4D97;
+      --hv-purple-dark: #833F80;
+      --hv-ink:         #111111;
+      --hv-fg-1:        #111111;
+      --hv-fg-2:        #4A4A4A;
+      --hv-fg-3:        #7A7A7A;
+      --hv-line:        #E5E2DB;
+      --hv-line-2:      #CFCBC0;
+      --hv-bg:          #FAF7F0;
+      --hv-bg-card:     #FFFFFF;
+      --hv-bg-alt:      #F2EEE4;
+      --hv-green-soft:  #E9F7EA;
+      --hv-shadow-card: 0 2px 0 rgba(10,10,10,.05), 0 10px 28px -10px rgba(10,10,10,.18);
+      --hv-shadow-md:   0 4px 12px rgba(10,10,10,.08), 0 1px 2px rgba(10,10,10,.05);
+      --hv-radius-sm:   8px;
+      --hv-radius-md:   14px;
+      --hv-radius-lg:   22px;
+      --hv-ease-out:    cubic-bezier(.22,.61,.36,1);
+      --hv-dur-fast:    120ms;
+      --hv-dur-med:     220ms;
+      --hv-font-display: "Bowlby One", Impact, sans-serif;
+      --hv-font-body:    "Aeonik", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    }
+
+    /* ── Reset ───────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── Page ────────────────────────────────────────────────── */
+    html { color: var(--hv-fg-1); background: var(--hv-bg); }
+    body {
+      font-family: var(--hv-font-body);
+      font-size: 16px;
+      line-height: 1.55;
+      letter-spacing: -0.005em;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 16px;
+      background: var(--hv-bg);
+    }
+
+    /* ── Card ────────────────────────────────────────────────── */
+    .card {
+      background: var(--hv-bg-card);
+      border-radius: var(--hv-radius-lg);
+      padding: 40px;
+      max-width: 520px;
+      width: 100%;
+      box-shadow: var(--hv-shadow-card);
+      border: 1px solid var(--hv-line);
+    }
+
+    /* ── Header ──────────────────────────────────────────────── */
+    .eyebrow {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--hv-kale);
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      font-family: var(--hv-font-body);
+      font-weight: 700;
+      font-size: 32px;
+      line-height: 1.05;
+      letter-spacing: -0.025em;
+      color: var(--hv-ink);
+      margin-bottom: 6px;
+    }
+
+    .subtitle {
+      font-size: 15px;
+      color: var(--hv-fg-2);
+      margin-bottom: 32px;
+    }
+
+    /* ── Form ────────────────────────────────────────────────── */
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--hv-fg-2);
+      margin-bottom: 8px;
+    }
+
+    textarea {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: var(--hv-radius-md);
+      border: 1.5px solid var(--hv-line-2);
+      background: #fff;
+      font-family: var(--hv-font-body);
+      font-size: 15px;
+      color: var(--hv-fg-1);
+      resize: vertical;
+      min-height: 96px;
+      outline: none;
+      transition: border-color var(--hv-dur-fast) var(--hv-ease-out),
+                  box-shadow var(--hv-dur-fast) var(--hv-ease-out);
+    }
+
+    textarea:focus {
+      border-color: var(--hv-kale);
+      box-shadow: 0 0 0 3px rgba(1, 117, 79, 0.15);
+    }
+
+    textarea::placeholder { color: var(--hv-fg-3); }
+
+    /* ── Button ──────────────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 12px;
+      width: 100%;
+      padding: 16px 22px;
+      background: var(--hv-green);
+      color: #000;
+      border: none;
+      border-radius: var(--hv-radius-sm);
+      font-family: var(--hv-font-body);
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.005em;
+      cursor: pointer;
+      transition: background var(--hv-dur-fast) var(--hv-ease-out),
+                  transform var(--hv-dur-fast) var(--hv-ease-out);
+    }
+
+    .btn:hover { background: #37A679; transform: translateY(-1px); }
+    .btn:active { transform: translateY(0) scale(.98); }
+    .btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+
+    /* ── Error ───────────────────────────────────────────────── */
+    .error {
+      margin-top: 12px;
+      background: #FFF0F0;
+      border: 1px solid #FFD5D5;
+      color: #C0392B;
+      border-radius: var(--hv-radius-sm);
+      padding: 12px 16px;
+      font-size: 14px;
+      display: none;
+    }
+    .error.visible { display: block; }
+
+    /* ── Results ─────────────────────────────────────────────── */
+    .results { margin-top: 32px; display: none; }
+    .results.visible { display: block; }
+
+    .totals {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .stat {
+      flex: 1;
+      background: var(--hv-green-soft);
+      border-radius: var(--hv-radius-md);
+      padding: 20px 16px;
+      text-align: center;
+      border: 1px solid #C8EDD7;
+    }
+
+    .stat .value {
+      font-family: var(--hv-font-body);
+      font-weight: 700;
+      font-size: 40px;
+      line-height: 1;
+      letter-spacing: -0.025em;
+      color: var(--hv-kale);
+    }
+
+    .stat .unit {
+      font-size: 12px;
+      color: var(--hv-fg-3);
+      margin-top: 2px;
+    }
+
+    .stat .stat-label {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--hv-fg-2);
+      margin-top: 6px;
+    }
+
+    /* ── Breakdown ───────────────────────────────────────────── */
+    .breakdown { border-top: 1px solid var(--hv-line); padding-top: 16px; }
+
+    .breakdown-label {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--hv-fg-3);
+      margin-bottom: 12px;
+    }
+
+    .food-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--hv-line);
+      gap: 12px;
+    }
+    .food-item:last-child { border-bottom: none; }
+
+    .food-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--hv-fg-1);
+      flex: 1;
+      min-width: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .food-macros {
+      font-size: 13px;
+      color: var(--hv-fg-3);
+      white-space: nowrap;
+    }
+
+    /* ── Spinner ─────────────────────────────────────────────── */
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(0,0,0,0.2);
+      border-top-color: #000;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <p class="eyebrow">Happy Viking</p>
+    <h1>Breakfast Tracker</h1>
+    <p class="subtitle">Enter what you ate and see your protein &amp; fiber breakdown.</p>
+
+    <label for="meal-input">What did you have for breakfast?</label>
+    <textarea id="meal-input" placeholder="e.g. 2 eggs, toast with peanut butter, orange juice"></textarea>
+
+    <button class="btn" id="analyze-btn" onclick="analyzeMeal()">Analyze Meal</button>
+
+    <div class="error" id="error-box"></div>
+
+    <div class="results" id="results">
+      <div class="totals">
+        <div class="stat">
+          <div class="value" id="total-protein">—</div>
+          <div class="unit">grams</div>
+          <div class="stat-label">Protein</div>
+        </div>
+        <div class="stat">
+          <div class="value" id="total-fiber">—</div>
+          <div class="unit">grams</div>
+          <div class="stat-label">Fiber</div>
+        </div>
+      </div>
+      <div class="breakdown">
+        <p class="breakdown-label">Breakdown by food</p>
+        <div id="food-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+
+    function parseItems(input) {
+      return input
+        .split(/,|\band\b/)
+        .map(s => s.trim())
+        .filter(s => s.length > 0)
+        .map(s => {
+          const match = s.match(/^(\d+(?:\.\d+)?)\s+(.+)$/);
+          if (match) {
+            return { quantity: parseFloat(match[1]), food: match[2] };
+          }
+          return { quantity: 1, food: s };
+        });
+    }
+
+    async function fetchNutrition({ quantity, food }) {
+      const url = `/api/nutrition?query=${encodeURIComponent(food)}`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('API request failed');
+      const data = await res.json();
+      const result = data.foods?.[0];
+      if (!result) return null;
+
+      const getNutrient = (id) => {
+        const n = result.foodNutrients?.find(n => n.nutrientId === id);
+        return n ? Math.round(n.value * quantity * 10) / 10 : 0;
+      };
+
+      return {
+        name: quantity > 1 ? `${quantity}x ${result.description}` : result.description,
+        protein: getNutrient(1003),
+        fiber: getNutrient(1079),
+      };
+    }
+
+    async function analyzeMeal() {
+      const input = document.getElementById('meal-input').value.trim();
+      const btn = document.getElementById('analyze-btn');
+      const errorBox = document.getElementById('error-box');
+      const results = document.getElementById('results');
+
+      errorBox.classList.remove('visible');
+      results.classList.remove('visible');
+
+      if (!input) {
+        errorBox.textContent = 'Please enter what you had for breakfast.';
+        errorBox.classList.add('visible');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span>Analyzing...';
+
+      try {
+        const items = parseItems(input);
+        const foods = await Promise.all(items.map(fetchNutrition));
+
+        let totalProtein = 0;
+        let totalFiber = 0;
+        const foodList = document.getElementById('food-list');
+        foodList.innerHTML = '';
+
+        foods.forEach(food => {
+          if (!food) return;
+          totalProtein += food.protein;
+          totalFiber += food.fiber;
+
+          const div = document.createElement('div');
+          div.className = 'food-item';
+          div.innerHTML = `
+            <span class="food-name">${food.name}</span>
+            <span class="food-macros">${food.protein}g protein · ${food.fiber}g fiber</span>
+          `;
+          foodList.appendChild(div);
+        });
+
+        document.getElementById('total-protein').textContent = Math.round(totalProtein * 10) / 10;
+        document.getElementById('total-fiber').textContent = Math.round(totalFiber * 10) / 10;
+        results.classList.add('visible');
+      } catch (err) {
+        errorBox.textContent = 'Something went wrong fetching nutrition data. Try again in a moment.';
+        errorBox.classList.add('visible');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = 'Analyze Meal';
+      }
+    }
+
+    document.getElementById('meal-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter' && e.metaKey) analyzeMeal();
+    });
+  </script>
+</body>
+</html>
