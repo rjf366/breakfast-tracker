@@ -256,6 +256,105 @@
       white-space: nowrap;
     }
 
+    /* ── Comparison ─────────────────────────────────────────── */
+    .comparison {
+      margin-top: 24px;
+      border: 1.5px solid var(--hv-line-2);
+      border-radius: var(--hv-radius-md);
+      overflow: hidden;
+    }
+
+    .comparison-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      background: var(--hv-bg-alt);
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--hv-line-2);
+    }
+
+    .comparison-header span {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--hv-fg-3);
+    }
+
+    .comparison-header span:last-child,
+    .comparison-row .col-hv {
+      text-align: right;
+    }
+
+    .comparison-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--hv-line);
+      align-items: center;
+    }
+
+    .comparison-row:last-child { border-bottom: none; }
+
+    .col-nutrient {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--hv-fg-2);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .col-meal, .col-hv {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--hv-fg-1);
+    }
+
+    .col-hv { text-align: right; }
+
+    .winner { color: var(--hv-kale); }
+
+    .check {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      background: var(--hv-kale);
+      border-radius: 50%;
+      color: white;
+      font-size: 11px;
+      line-height: 20px;
+      text-align: center;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+
+    .check-right {
+      margin-left: 0;
+      margin-right: 6px;
+    }
+
+    .comparison-footer {
+      background: var(--hv-bg-alt);
+      padding: 12px 16px;
+      border-top: 1px solid var(--hv-line-2);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--hv-fg-1);
+    }
+
+    .comparison-footer .winner-badge {
+      background: var(--hv-kale);
+      color: white;
+      border-radius: var(--hv-radius-pill);
+      padding: 3px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
     /* ── Spinner ─────────────────────────────────────────────── */
     .spinner {
       width: 16px;
@@ -297,6 +396,25 @@
       <div class="breakdown">
         <p class="breakdown-label">Breakdown by food</p>
         <div id="food-list"></div>
+      </div>
+
+      <div class="comparison" id="comparison">
+        <div class="comparison-header">
+          <span>Nutrient</span>
+          <span>Your Meal</span>
+          <span style="text-align:right">Happy Viking</span>
+        </div>
+        <div class="comparison-row">
+          <span class="col-nutrient">Protein</span>
+          <span class="col-meal" id="cmp-meal-protein">—</span>
+          <span class="col-hv" id="cmp-hv-protein">30g</span>
+        </div>
+        <div class="comparison-row">
+          <span class="col-nutrient">Fiber</span>
+          <span class="col-meal" id="cmp-meal-fiber">—</span>
+          <span class="col-hv" id="cmp-hv-fiber">10g</span>
+        </div>
+        <div class="comparison-footer" id="cmp-footer"></div>
       </div>
     </div>
   </div>
@@ -378,8 +496,38 @@
           foodList.appendChild(div);
         });
 
-        document.getElementById('total-protein').textContent = Math.round(totalProtein * 10) / 10;
-        document.getElementById('total-fiber').textContent = Math.round(totalFiber * 10) / 10;
+        const rProtein = Math.round(totalProtein * 10) / 10;
+        const rFiber = Math.round(totalFiber * 10) / 10;
+
+        document.getElementById('total-protein').textContent = rProtein;
+        document.getElementById('total-fiber').textContent = rFiber;
+
+        const HV_PROTEIN = 30;
+        const HV_FIBER = 10;
+        const mealWinsProtein = rProtein > HV_PROTEIN;
+        const mealWinsFiber = rFiber > HV_FIBER;
+        const mealWinsBoth = mealWinsProtein && mealWinsFiber;
+
+        const check = '<span class="check">✓</span>';
+        const checkR = '<span class="check check-right">✓</span>';
+
+        document.getElementById('cmp-meal-protein').innerHTML =
+          mealWinsProtein ? `<span class="winner">${rProtein}g ${check}</span>` : `${rProtein}g`;
+        document.getElementById('cmp-hv-protein').innerHTML =
+          !mealWinsProtein ? `${checkR}<span class="winner">30g</span>` : '30g';
+
+        document.getElementById('cmp-meal-fiber').innerHTML =
+          mealWinsFiber ? `<span class="winner">${rFiber}g ${check}</span>` : `${rFiber}g`;
+        document.getElementById('cmp-hv-fiber').innerHTML =
+          !mealWinsFiber ? `${checkR}<span class="winner">10g</span>` : '10g';
+
+        const footer = document.getElementById('cmp-footer');
+        if (mealWinsBoth) {
+          footer.innerHTML = `<span class="winner-badge">✓ Your Meal Wins</span> Your breakfast beats Happy Viking on both protein and fiber!`;
+        } else {
+          footer.innerHTML = `<span class="winner-badge">✓ Happy Viking Wins</span> Our shake has ${!mealWinsProtein && !mealWinsFiber ? 'more protein and fiber' : !mealWinsProtein ? 'more protein' : 'more fiber'} than your breakfast.`;
+        }
+
         results.classList.add('visible');
       } catch (err) {
         errorBox.textContent = 'Something went wrong fetching nutrition data. Try again in a moment.';
